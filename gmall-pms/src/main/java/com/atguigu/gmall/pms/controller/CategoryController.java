@@ -1,12 +1,13 @@
 package com.atguigu.gmall.pms.controller;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,21 @@ import com.atguigu.gmall.pms.service.CategoryService;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    @ApiOperation("根据分类等级或者父id查询分类")
+    @GetMapping
+    public Resp<List<CategoryEntity>> queryCategoriesByPidOrlevel(@RequestParam(value="level",defaultValue = "0")Integer level,
+                                                                  @RequestParam(value = "parentCid",required = false)Long pid){
+        QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
+        if(level!=0){
+            wrapper.eq("cat_level",level);
+        }
+        if(pid!=null){
+            wrapper.eq("parent_cid",pid);
+        }
+        List<CategoryEntity> list = categoryService.list(wrapper);
+        return Resp.ok(list);
+    }
 
     /**
      * 列表
