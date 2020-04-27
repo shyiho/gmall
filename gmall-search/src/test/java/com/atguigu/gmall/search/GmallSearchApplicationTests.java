@@ -1,6 +1,5 @@
 package com.atguigu.gmall.search;
 
-import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
 import com.atguigu.gmall.pms.entity.*;
@@ -40,6 +39,10 @@ class GmallSearchApplicationTests {
         this.restTemplate.putMapping(Goods.class);
         //this.restTemplate.deleteIndex(Goods.class);
     }
+    @Test
+    void delectById(){
+      goodsRepository.deleteById(27L);
+}
     @Test
     void importData(){
         Long pageNum=1l;

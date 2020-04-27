@@ -7,6 +7,7 @@ import java.util.List;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.pms.vo.CategoryVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +34,12 @@ import com.atguigu.gmall.pms.service.CategoryService;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    @GetMapping("{pid}")
+    public Resp<List<CategoryVO>> querySubCategories(@PathVariable("pid")Long pid){
+        List<CategoryVO> categoryVOS =this.categoryService.querySubCategories(pid);
+          return Resp.ok(categoryVOS);
+    }
 
     @ApiOperation("根据分类等级或者父id查询分类")
     @GetMapping

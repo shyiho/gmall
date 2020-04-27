@@ -98,6 +98,7 @@ public class SkuInfoController {
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('pms:skuinfo:delete')")
     public Resp<Object> delete(@RequestBody Long[] skuIds){
+
 		skuInfoService.removeByIds(Arrays.asList(skuIds));
 
         return Resp.ok(null);

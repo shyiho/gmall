@@ -27,5 +27,19 @@ spring:
           uri: lb://sms-service
           predicates:
             - Path=/sms/**
+        - id: index-route  # 搜索服务路由
+          uri: lb://index-service
+          predicates:
+            - Path=/api/index/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment} # 重写前缀，去掉/api
+        - id: auth-service #授权中心
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
   application:
     name: gmall-gateway
+gmall:
+  jwt:
+    pubKeyPath: F:\\shangguigu\\Code\\rsa\\rsa.pub # 公钥地址
+    cookieName: GMALL_TOKEN

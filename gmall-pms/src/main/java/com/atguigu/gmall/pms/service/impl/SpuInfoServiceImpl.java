@@ -11,8 +11,10 @@ import com.atguigu.gmall.pms.vo.SkuInfoVO;
 import com.atguigu.gmall.pms.vo.SpuInfoVO;
 import com.atguigu.gmall.sms.vo.SkuSaleVO;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -76,6 +78,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private GmallSmsClient gmallSmsClient;
     @Autowired
     private SpuInfoDescService spuInfoDescService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Value("${item.rabbitmq.exchange}")
+    private String EXCHANGE_NAME;
 
     @Override
     @GlobalTransactional
@@ -89,6 +95,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         saveBaseAttrValue(spuInfoVO, spuId);
         //2保存sku相关的3张表
         saveSkuAndSale(spuInfoVO, spuId);
+
+        sendMsg("insert",spuId);
+    }
+
+    private void sendMsg(String type,Long spuId){
+        this.rabbitTemplate.convertAndSend(EXCHANGE_NAME,"item."+type,spuId);
     }
 
     private void saveSkuAndSale(SpuInfoVO spuInfoVO, Long spuId) {
